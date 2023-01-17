@@ -8,26 +8,29 @@
 # make checkLex          checks Lex for memory errors
 #------------------------------------------------------------------------------
 
+CC = gcc
+CFLAGS = -std=c17 -Wall -g
+
 Lex : Lex.o List.o
-	gcc -std=c17 -Wall -o Lex Lex.o List.o
+	$(CC) $(CFLAGS) -o Lex Lex.o List.o
 
 Lex.o : Lex.c List.h
-	gcc -std=c17 -Wall -c Lex.c
+	$(CC) $(CFLAGS) -c Lex.c
 
 ListClient: ListClient.o List.o
-	gcc -std=c17 -Wall -o ListClient ListClient.o List.o
+	$(CC) $(CFLAGS) -o ListClient ListClient.o List.o
 
 ListClient.o : ListClient.c List.h
-	gcc -std=c17 -Wall -c ListClient.c
+	$(CC) $(CFLAGS) -g -c ListClient.c
 
 ListTest: ListTest.o List.o
-	gcc -std=c17 -Wall -o ListClient ListClient.o List.o
+	$(CC) $(CFLAGS) -o ListClient ListClient.o List.o
 
 ListTest.o : ListTest.c List.h
-	gcc -std=c17 -Wall -c ListClient.c
+	$(CC) $(CFLAGS) -c ListClient.c
 
 List.o : List.c List.h
-	gcc -std=c17 -Wall -c List.c
+	$(CC) $(CFLAGS) -c List.c
 
 clean :
 	rm -f Lex ListClient Lex.o ListClient.o List.o
