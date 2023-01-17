@@ -1,12 +1,14 @@
 #pragma once
+#include <stdbool.h>
+#include <stdio.h>
 //Define Structs
-typedef NodeObj* Node;
+typedef struct NodeObj* Node;
 typedef struct NodeObj {
     int data;
     Node next;
     Node prev;
 } NodeObj;
-typedef ListObj* List;
+typedef struct ListObj* List;
 typedef struct ListObj {
     Node front;
     Node back;
@@ -14,6 +16,7 @@ typedef struct ListObj {
     int cursorIndex;
     int length;
 } ListObj;
+
 // Constructors-Destructors ---------------------------------------------------
 List newList(void); // Creates and returns a new empty List.
 void freeList(List* pL); // Frees all heap memory associated with *pL, and sets

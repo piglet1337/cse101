@@ -1,7 +1,5 @@
 #include "List.h"
-#include <stdbool.h>
-#include <stdio.h>
-
+#include <stdlib.h>
 // Constructors-Destructors ---------------------------------------------------
 Node newNode(int x) {
     Node n = (Node) malloc(sizeof(NodeObj));
@@ -36,29 +34,42 @@ int index(List L) {
     if (L->cursor) {
         return L->cursorIndex;
     }
+    return -1;
 }
 int front(List L) {
     // Returns front element of L. Pre: length()>0
     if (length(L) > 0) {
-        return L->front;
+        return L->front->data;
     }
     return -1;
 }
 int back(List L) {
     // Returns back element of L. Pre: length()>0
     if (length(L) > 0) {
-        return L->back;
+        return L->back->data;
     }
     return -1;
 }
 int get(List L) {
     // Returns cursor element of L. Pre: length()>0, index()>=0
     if (length(L) > 0 && L->cursorIndex >= 0) {
-        return L->cursor;
+        return L->cursor->data;
     }
+    return -1;
 }
-bool equals(List A, List B); // Returns true iff Lists A and B are in same
- // state, and returns false otherwise.
+bool equals(List A, List B) {
+    // Returns true iff Lists A and B are in same
+    // state, and returns false otherwise.
+    if (A->cursorIndex != B->cursorIndex || A->cursor != B->cursor || length(A) != length(B)) {return false;}
+    Node nodeA = A->front;
+    Node nodeB = B->front;
+    for (int i = 0; i < length(A); i++) {
+        if (nodeA->data != nodeB->data) {return false;}
+        nodeA = nodeA->next;
+        nodeB = nodeB->next;
+    }
+    return true;
+}
 // Manipulation procedures ----------------------------------------------------
 void clear(List L) {
     // Resets L to its original empty state.
@@ -229,7 +240,19 @@ void printList(FILE* out, List L) {
         n = n->next;
     }
 }
-List copyList(List L); // Returns a new List representing the same integer
- // sequence as L. The cursor in the new list is undefined,
-// regardless of the state of the cursor in L. The state
-// of L is unchanged.
+List copyList(List L) {
+    // Returns a new List representing the same integer
+    // sequence as L. The cursor in the new list is undefined,
+    // regardless of the state of the cursor in L. The state
+    // of L is unchanged.
+    List copyL = newList();
+    copyL->cursorIndex = L->cursorIndex;
+    copyL->cursor = L->cursor;
+    copyL->length = L->length;
+    Node n = L->front;
+    for (int i = 0; i < length(L); i++) {
+        prepend(copyL, n->data);
+        n = n->next;
+    }
+    return copyL;
+}
