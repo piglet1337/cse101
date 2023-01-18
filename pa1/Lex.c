@@ -43,7 +43,7 @@ int main(int argc, char *argv[]) {
     //fill array with lines of file
     char **arrayoflines = (char**) calloc(lines, sizeof(char*));
     for (int i = 0; i < lines; i++) {
-        arrayoflines[i] = (char*) calloc(longest, sizeof(char));
+        arrayoflines[i] = (char*) calloc(longest+2, sizeof(char));
         if (fgets(arrayoflines[i], longest+2, inputFile) == NULL) {
             printf("test: %d\n", i);
         }
