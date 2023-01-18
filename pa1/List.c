@@ -228,8 +228,8 @@ void deleteFront(List L) {
             free(L->front->prev);
             L->front->prev = NULL;
             L->cursorIndex--;
+            L->length--;
         }
-        L->length--;
     }
 }
 void deleteBack(List L) {
@@ -242,8 +242,8 @@ void deleteBack(List L) {
             L->back = L->back->prev;
             free(L->back->next);
             L->back->next = NULL;
+            L->length--;
         }
-        L->length--;
     }
 }
 void delete(List L) {
@@ -264,8 +264,6 @@ void delete(List L) {
                 L->cursor->next->prev = L->cursor->prev;
                 L->cursor->prev->next = L->cursor->next;
                 free(L->cursor);
-                L->cursor = NULL;
-                L->cursorIndex = -1;
                 L->length--;
             }
             L->cursor = NULL;

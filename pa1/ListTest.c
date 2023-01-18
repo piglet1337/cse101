@@ -159,6 +159,15 @@ int main(int argc, char* argv[]){
     moveFront(C);
     delete(C);
     assert(length(C) == 0);
+    assert(index(C) == -1);
+    append(C, 1);
+    deleteFront(C);
+    assert(length(C) == 0);
+    assert(index(C) == -1);
+    append(C, 1);
+    deleteBack(C);
+    assert(length(C) == 0);
+    assert(index(C) == -1);
 
     //test freeList
     freeList(&A);
