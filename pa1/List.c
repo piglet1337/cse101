@@ -1,3 +1,9 @@
+/********************************************************************************* 
+* Ryan Miller, rnmiller
+* 2023 Winter CSE101 PA1 
+* List.c 
+* List ADT Module 
+*********************************************************************************/ 
 #include "List.h"
 #include <stdlib.h>
 // Constructors-Destructors ---------------------------------------------------
@@ -7,11 +13,17 @@ Node newNode(int x) {
     n->next = NULL;
     n->prev = NULL;
     return n;
-} 
+}
+void freeNode(Node* n) {
+    // frees all heap memory associated with *n, and sets
+    // *n to NULL
+    free(*n);
+    *n = NULL;
+}
 List newList(void) {
     // Creates and returns a new empty List.
     List L = (List) malloc(sizeof(ListObj));
-    L->cursorIndex = 0;
+    L->cursorIndex = -1;
     L->length = 0;
     L->front = NULL;
     L->back = NULL;
@@ -21,6 +33,13 @@ List newList(void) {
 void freeList(List* pL) {
     // Frees all heap memory associated with *pL, and sets
     // *pL to NULL.
+    Node n = (*pL)->front;
+    Node nextN;
+    for (int i = 0; i < length(*pL); i++) {
+        nextN = n->next;
+        free(n);
+        n = nextN;
+    }
     free(*pL);
     *pL = NULL;
 }
@@ -73,6 +92,13 @@ bool equals(List A, List B) {
 // Manipulation procedures ----------------------------------------------------
 void clear(List L) {
     // Resets L to its original empty state.
+    Node n = (L)->front;
+    Node nextN;
+    for (int i = 0; i < length(L); i++) {
+        nextN = n->next;
+        free(n);
+        n = nextN;
+    }
     L->cursorIndex = 0;
     L->length = 0;
     L->front = NULL;
@@ -82,12 +108,8 @@ void clear(List L) {
 void set(List L, int x) {
     // Overwrites the cursor element’s data with x.
     // Pre: length()>0, index()>=0
-    if (length(L) > 0 && L->cursorIndex >= 0) {
-        L->cursorIndex = x;
-        L->cursor = L->front;
-        for (int i = 0; i < x; i++) {
-            L->cursor = L->cursor->next;
-        }
+    if (length(L) > 0 && L->cursorIndex >= 0 && L->cursor != NULL) {
+        L->cursor->data = x;
     }
 }
 void moveFront(List L) {
@@ -139,6 +161,7 @@ void prepend(List L, int x) {
     L->length++;
     if (length(L) == 1) {
         L->front = n;
+        L->back = n;
         return;
     }
     n->next = L->front;
@@ -152,6 +175,7 @@ void append(List L, int x) {
     L->length++;
     if (length(L) == 1) {
         L->front = n;
+        L->back = n;
         return;
     }
     n->prev = L->back;
@@ -196,36 +220,47 @@ void insertAfter(List L, int x) {
 void deleteFront(List L) {
     // Delete the front element. Pre: length()>0
     if (length(L) > 0) {
-        L->length--;
         if (length(L) == 1) {
             clear(L);
         }
         else {
             L->front = L->front->next;
+            free(L->front->prev);
             L->front->prev = NULL;
             L->cursorIndex--;
         }
+        L->length--;
     }
 }
 void deleteBack(List L) {
     // Delete the back element. Pre: length()>0
     if (length(L) > 0) {
-        L->length--;
         if (length(L) == 1) {
             clear(L);
         }
         else {
             L->back = L->back->prev;
+            free(L->back->next);
             L->back->next = NULL;
         }
+        L->length--;
     }
 }
 void delete(List L) {
     // Delete cursor element, making cursor undefined.
     // Pre: length()>0, index()>=0
     if (length(L) > 0 && L->cursorIndex >= 0) {
-        L->cursor = NULL;
-        L->cursorIndex = 0;
+        if (length(L) == 1) {
+            clear(L);
+        }
+        else {
+            L->cursor->next->prev = L->cursor->prev;
+            L->cursor->prev->next =  L->cursor->next;
+            free(L->cursor);
+            L->cursor = NULL;
+            L->cursorIndex = -1;
+        }
+        L->length--;
     }
 }
 // Other operations -----------------------------------------------------------
@@ -236,7 +271,7 @@ void printList(FILE* out, List L) {
     // with front on left.
     Node n = L->front;
     for (int i = 0; i < length(L); i++) {
-        fprintf(out, "%d", n->data);
+        fprintf(out, "%d ", n->data);
         n = n->next;
     }
 }
@@ -246,13 +281,13 @@ List copyList(List L) {
     // regardless of the state of the cursor in L. The state
     // of L is unchanged.
     List copyL = newList();
+    Node n = L->front;
+    for (int i = 0; i < length(L); i++) {
+        append(copyL, n->data);
+        n = n->next;
+    }
     copyL->cursorIndex = L->cursorIndex;
     copyL->cursor = L->cursor;
     copyL->length = L->length;
-    Node n = L->front;
-    for (int i = 0; i < length(L); i++) {
-        prepend(copyL, n->data);
-        n = n->next;
-    }
     return copyL;
 }

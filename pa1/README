@@ -1,0 +1,8 @@
+Ryan Miller, rnmiller  
+2023 Winter CSE101 PA1  
+  
+List.h: Header file for List ADT  
+List.c: List ADT Module  
+ListTest.c: Test client for List ADT  
+Lex.c: Lex program that sorts lines in input file and places them in output file  
+Makefile: Makefile for this assignment, can be used to compile programs

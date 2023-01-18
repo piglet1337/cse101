@@ -1,4 +1,7 @@
 #------------------------------------------------------------------------------
+# Ryan Miller, rnmiller
+# 2023 Winter CSE101 PA1
+# 
 # Makefile for CSE 101 Programming Assignment 1
 #
 # make                   makes Lex
@@ -24,16 +27,16 @@ ListClient.o : ListClient.c List.h
 	$(CC) $(CFLAGS) -g -c ListClient.c
 
 ListTest: ListTest.o List.o
-	$(CC) $(CFLAGS) -o ListClient ListClient.o List.o
+	$(CC) $(CFLAGS) -o ListTest ListTest.o List.o
 
 ListTest.o : ListTest.c List.h
-	$(CC) $(CFLAGS) -c ListClient.c
+	$(CC) $(CFLAGS) -c ListTest.c
 
 List.o : List.c List.h
 	$(CC) $(CFLAGS) -c List.c
 
 clean :
-	rm -f Lex ListClient Lex.o ListClient.o List.o
+	rm -f Lex ListClient ListTest Lex.o ListClient.o List.o ListTest.o
 
 checkClient : 
 	valgrind --leak-check=full ListClient

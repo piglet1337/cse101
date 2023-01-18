@@ -1,3 +1,9 @@
+/********************************************************************************* 
+* Ryan Miller, rnmiller 
+* 2023 Winter CSE101 PA1 
+* List.h 
+* Header file for List ADT 
+*********************************************************************************/ 
 #pragma once
 #include <stdbool.h>
 #include <stdio.h>
