@@ -79,7 +79,7 @@ int get(List L) {
 bool equals(List A, List B) {
     // Returns true iff Lists A and B are in same
     // state, and returns false otherwise.
-    if (A->cursorIndex != B->cursorIndex || A->cursor != B->cursor || length(A) != length(B)) {return false;}
+    if (length(A) != length(B)) {return false;}
     Node nodeA = A->front;
     Node nodeB = B->front;
     for (int i = 0; i < length(A); i++) {
@@ -167,6 +167,7 @@ void prepend(List L, int x) {
     n->next = L->front;
     L->front->prev = n;
     L->front = n;
+    L->cursorIndex++;
 }
 void append(List L, int x) {
     // Insert new element into L. If L is non-empty,
@@ -186,40 +187,44 @@ void insertBefore(List L, int x) {
     // Insert new element before cursor.
     // Pre: length()>0, index()>=0
     if (length(L) > 0 && L->cursorIndex >= 0) {
-        L->length++;
-        Node n = newNode(x);
         if(L->cursorIndex == 0) {
-            L->front = n;
+            prepend(L, x);
         }
         else {
+            L->length++;
+            Node n = newNode(x);
             L->cursor->prev->next = n;
             n->prev = L->cursor->prev;
+            L->cursor->prev = n;
+            n->next = L->cursor;
+            L->cursorIndex++;
         }
-        L->cursor->prev = n;
-        n->next = L->cursor;
-        L->cursorIndex++;
     }
 }
 void insertAfter(List L, int x) {
     // Insert new element after cursor.
     // Pre: length()>0, index()>=0
     if (length(L) > 0 && L->cursorIndex >= 0) {
-        L->length++;
-        Node n = newNode(x);
         if(L->cursorIndex == length(L) - 1) {
-            L->back = n;
+            append(L, x);
         }
         else {
+            L->length++;
+            Node n = newNode(x);
             L->cursor->next->prev = n;
             n->next = L->cursor->next;
+            L->cursor->next = n;
+            n->prev = L->cursor;
         }
-        L->cursor->next = n;
-        n->prev = L->cursor;
     }
 }
 void deleteFront(List L) {
     // Delete the front element. Pre: length()>0
     if (length(L) > 0) {
+        if (L->cursorIndex == 0) {
+            L->cursor = NULL;
+            L->cursorIndex = -1;
+        }
         if (length(L) == 1) {
             clear(L);
         }
@@ -235,6 +240,10 @@ void deleteFront(List L) {
 void deleteBack(List L) {
     // Delete the back element. Pre: length()>0
     if (length(L) > 0) {
+        if (L->cursorIndex == length(L) - 1) {
+            L->cursor = NULL;
+            L->cursorIndex = -1;
+        }
         if (length(L) == 1) {
             clear(L);
         }
