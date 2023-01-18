@@ -2,7 +2,8 @@
 * Ryan Miller, rnmiller
 * 2023 Winter CSE101 PA1 
 * ListTest.c 
-* Test client for List ADT 
+* Test client for List ADT
+* If no errors are raised and all memory is freed then List ADT worked correctly 
 *********************************************************************************/ 
 #include <stdio.h>
 #include <stdlib.h>
@@ -117,10 +118,17 @@ int main(int argc, char* argv[]){
     //test delete
     movePrev(B);
     movePrev(B);
-    movePrev(B);
     delete(B);
     assert(index(B) == -1);
     assert(length(B) == 8);
+    moveFront(B);
+    delete(B);
+    assert(index(B) == -1);
+    assert(length(B) == 7);
+    moveBack(B);
+    delete(B);
+    assert(index(B) == -1);
+    assert(length(B) == 6);
 
     //test movePrev and moveNext off of list
     moveFront(A);
@@ -141,9 +149,16 @@ int main(int argc, char* argv[]){
     rewind(tmpFile);
     char line[30];
     fgets(line, 30, tmpFile);
-    assert(strcmp(line, "1 11 10 3 4 5 6 7 8"));
+    assert(!strcmp(line, "1 11 10 3 4 5 6 7 8 \n"));
     fgets(line, 30, tmpFile);
-    assert(strcmp(line, "8 7 6 5 3 10 11 1"));
+    assert(!strcmp(line, "7 6 5 4 10 11 \n"));
+    fclose(tmpFile);
+
+    //test delete on List with 1 item
+    append(C, 1);
+    moveFront(C);
+    delete(C);
+    assert(length(C) == 0);
 
     //test freeList
     freeList(&A);

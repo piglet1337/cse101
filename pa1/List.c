@@ -99,7 +99,7 @@ void clear(List L) {
         free(n);
         n = nextN;
     }
-    L->cursorIndex = 0;
+    L->cursorIndex = -1;
     L->length = 0;
     L->front = NULL;
     L->back = NULL;
@@ -254,13 +254,23 @@ void delete(List L) {
             clear(L);
         }
         else {
-            L->cursor->next->prev = L->cursor->prev;
-            L->cursor->prev->next =  L->cursor->next;
-            free(L->cursor);
+            if (index(L) == 0) {
+                deleteFront(L);
+            }
+            else if (index(L) == length(L) - 1) {
+                deleteBack(L);
+            }
+            else {
+                L->cursor->next->prev = L->cursor->prev;
+                L->cursor->prev->next = L->cursor->next;
+                free(L->cursor);
+                L->cursor = NULL;
+                L->cursorIndex = -1;
+                L->length--;
+            }
             L->cursor = NULL;
             L->cursorIndex = -1;
         }
-        L->length--;
     }
 }
 // Other operations -----------------------------------------------------------
