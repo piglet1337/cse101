@@ -12,9 +12,9 @@
 
 int main(int argc, char* argv[]) {
     //test newGraph
-    Graph G = newGraph(4);
+    Graph G = newGraph(5);
     //test getOrder
-    assert(getOrder(G) == 4);
+    assert(getOrder(G) == 5);
     //test addEdge
     addEdge(G, 1, 3);
     //test addArc
@@ -37,6 +37,46 @@ int main(int argc, char* argv[]) {
     assert(!strcmp(line, "4: \n"));
     fclose(tmpFile);
 
+    //test makeNULL
+    makeNull(G);
+
+    //test BFS
+    addEdge(G, 1, 4);
+    addEdge(G, 2, 4);
+    addEdge(G, 2, 3);
+    addEdge(G, 3, 4);
+    BFS(G, 1);
+
+    //test getSource
+    assert(getSource(G) == 1);
+
+    //test getParent
+    assert(getParent(G, 3) == 4);
+    assert(getParent(G, 2) == 4);
+    assert(getParent(G, 4) == 1);
+    assert(getParent(G, 1) == NIL);
+
+    //test getDist
+    assert(getDist(G, 3) == 2);
+    assert(getDist(G, 2) == 2);
+    assert(getDist(G, 4) == 1);
+    assert(getDist(G, 1) == 0);
+
+    //test getPath
+    List path = newList();
+    getPath(path, G, 3);
+    moveFront(path);
+    assert(get(path) == 1);
+    moveNext(path);
+    assert(get(path) == 4);
+    moveNext(path);
+    assert(get(path) == 3);
+    clear(path);
+    getPath(path, G, 5);
+    moveFront(path);
+    assert(get(path) == NIL);
+    freeList(&path);
+    
     //test freeGraph
     freeGraph(&G);
 }

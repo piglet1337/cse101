@@ -9,10 +9,10 @@
 
 //define constants
 #define INF -1
-#define NIL 0
+#define NIL -2
 #define WHITE -2
-#define GRAY = -3
-#define BLACK = -4
+#define GRAY -3
+#define BLACK -4
 
 //define Graph
 typedef struct GraphObj* Graph;

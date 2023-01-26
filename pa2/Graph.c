@@ -78,16 +78,25 @@ int getDist(Graph G, int u) {
 void getPath(List L, Graph G, int u) {
     // appends to List L the vertices of a shortest path in G from source to u
     if (u < 1 || u > getOrder(G) || getSource(G) == NIL) {return;}
+    if (getSource(G) == u) {
+        append(L, u);
+        return;
+    }
     if (getParent(G, u) == NIL) {
         append(L, NIL);
         return;
     }
+    List temp = newList();
     int vert = u;
     while (vert != getSource(G)) {
-        append(L, vert);
+        prepend(temp, vert);
         vert = getParent(G, vert);
     }
-    append(L, vert);
+    prepend(temp, vert);
+    for (moveFront(temp); index(temp) >= 0; moveNext(temp)) {
+        append(L, get(temp));
+    }
+    freeList(&temp);
 }
 /*** Manipulation procedures ***/
 void makeNull(Graph G) {
@@ -131,7 +140,34 @@ void addArc(Graph G, int u, int v) {
     }
     if (index(G->adjacencyList[u]) < 0) {append(G->adjacencyList[u], v);}
 }
-void BFS(Graph G, int s);
+void BFS(Graph G, int s) {
+    // does a Breadth First Search starting with source s
+    for (int i = 0; i < getOrder(G) + 1; i++) {
+        G->colors[i] = WHITE;
+        G->distance[i] = INF;
+        G->parents[i] = NIL;
+    }
+    G->colors[s] = GRAY;
+    G->distance[s] = 0;
+    G->parents[s] = NIL;
+    G->source = s;
+    List Q = newList();
+    append(Q, s);
+    while (length(Q) > 0) {
+        int x = front(Q);
+        deleteFront(Q);
+        for (moveFront(G->adjacencyList[x]); index(G->adjacencyList[x]) >= 0; moveNext(G->adjacencyList[x])) {
+            if (G->colors[get(G->adjacencyList[x])] == WHITE) {
+                G->colors[get(G->adjacencyList[x])] = GRAY;
+                G->distance[get(G->adjacencyList[x])] = G->distance[x] + 1;
+                G->parents[get(G->adjacencyList[x])] = x;
+                append(Q, get(G->adjacencyList[x]));
+            }
+        }
+        G->colors[x] = BLACK;
+    }
+    freeList(&Q);
+}
 /*** Other operations ***/
 void printGraph(FILE* out, Graph G) {
     // prints out adjacency list of G to out
