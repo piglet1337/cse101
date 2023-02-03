@@ -35,9 +35,9 @@ Graph newGraph(int n) {
     for (int i = 1; i < n + 1; i++) {
         G->adjacencyList[i] = newList();
         G->colors[i] = WHITE;
-        G->parents[i] = 0;
-        G->discover[i] = NIL;
-        G->finish[i] = NIL;
+        G->parents[i] = NIL;
+        G->discover[i] = UNDEF;
+        G->finish[i] = UNDEF;
     }
     return G;
 }
@@ -82,6 +82,15 @@ int getFinish(Graph G, int u) {
 void addEdge(Graph G, int u, int v) {
     // adds edge between u and v in G
     if (u < 1 || u > getOrder(G) || v < 1 || v > getOrder(G)) {return;}
+    for (moveFront(G->adjacencyList[u]); index(G->adjacencyList[u]) >= 0; moveNext(G->adjacencyList[u])) {
+        if (get(G->adjacencyList[u]) == v) {
+            for (moveFront(G->adjacencyList[v]); index(G->adjacencyList[v]) >= 0; moveNext(G->adjacencyList[v])) {
+                if (get(G->adjacencyList[v]) == u) {
+                    return;
+                }
+            }
+        }
+    }
     G->size++;
     // add v to adjacencyList[u]
     for (moveFront(G->adjacencyList[u]); index(G->adjacencyList[u]) >= 0; moveNext(G->adjacencyList[u])) {
@@ -103,6 +112,11 @@ void addEdge(Graph G, int u, int v) {
 void addArc(Graph G, int u, int v) {
     // adds arc going from u to v
     if (u < 1 || u > getOrder(G) || v < 1 || v > getOrder(G)) {return;}
+    for (moveFront(G->adjacencyList[u]); index(G->adjacencyList[u]) >= 0; moveNext(G->adjacencyList[u])) {
+        if (get(G->adjacencyList[u]) == v) {
+            return;
+        }
+    }
     G->size++;
     // add v to adjacencyList[u]
     for (moveFront(G->adjacencyList[u]); index(G->adjacencyList[u]) >= 0; moveNext(G->adjacencyList[u])) {
@@ -132,7 +146,7 @@ void DFS(Graph G, List S) {
     if (length(S) != getOrder(G)) {return;}
     for (int i = 1; i < getOrder(G) + 1; i++) {
         G->colors[i] = WHITE;
-        G->parents[i] = 0;
+        G->parents[i] = NIL;
     }
     int time = 0;
     for (moveFront(S); index(S) >= 0; moveNext(S)) {

@@ -1,6 +1,4 @@
 #------------------------------------------------------------------------------
-#  Ryan Miller, rnmiller
-#  2023 Winter CSE101 PA3
 #  Makefile for CSE 101 Programming Assignment 3
 #
 #  make                     makes FindComponents

@@ -7,6 +7,7 @@
 *********************************************************************************/ 
 //include libraries
 #include "Graph.h"
+#include <stdlib.h>
 
 int main(int argc, char *argv[]) {
     //Print to stderr if more or less than two arguments
@@ -44,13 +45,27 @@ int main(int argc, char *argv[]) {
         }
     }
     fprintf(outputFile, "\nG contains %d strongly connected components:", numComponents);
-    int component = 1;
+    // make and print component lists
+    List *components = (List *) calloc(numComponents, sizeof(List));
+    int component = 0;
     for (moveFront(S); index(S) >= 0; moveNext(S)) {
         if (getParent(T, get(S)) == 0) {
-            fprintf(outputFile, "\nComponent %d: ", component);
+            components[component] = newList();
             component++;
         }
-        fprintf(outputFile, "%d ", get(S));
+        append(components[component-1], get(S));
     }
+    for (int i = component - 1; i >= 0; i--) {
+        fprintf(outputFile, "\nComponent %d: ", component - i);
+        printList(outputFile, components[i]);
+        freeList(&components[i]);
+    }
+    // free memory
+    free(components);
+    fclose(inputFile);
+    fclose(outputFile);
+    freeGraph(&G);
+    freeGraph(&T);
+    freeList(&S);
     return 0;
 }

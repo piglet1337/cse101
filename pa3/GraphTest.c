@@ -36,6 +36,40 @@ int main(int argc, char* argv[]) {
     fgets(line, 30, tmpFile);
     assert(!strcmp(line, "4: \n"));
     fclose(tmpFile);
+
+    //test copy and transpose graph
+    Graph C = copyGraph(transpose(transpose(G)));
+
+    //test DFS
+    addArc(C, 5, 3);
+    List S = newList();
+    append(S, 1);
+    append(S, 2);
+    append(S, 3);
+    append(S, 4);
+    append(S, 5);
+    DFS(C, S);
+
+    //test getParent
+    assert(getParent(C, 1) == NIL);
+    assert(getParent(C, 2) == NIL);
+    assert(getParent(C, 3) == 1);
+    assert(getParent(C, 4) == 2);
+    assert(getParent(C, 5) == NIL);
+
+    //test getDiscover
+    assert(getDiscover(C, 1) == 1);
+    assert(getDiscover(C, 2) == 5);
+    assert(getDiscover(C, 3) == 2);
+    assert(getDiscover(C, 4) == 6);
+    assert(getDiscover(C, 5) == 9);
+
+    //test getFinish
+    assert(getFinish(C, 1) == 4);
+    assert(getFinish(C, 2) == 8);
+    assert(getFinish(C, 3) == 3);
+    assert(getFinish(C, 4) == 7);
+    assert(getFinish(C, 5) == 10);
     
     //test freeGraph
     freeGraph(&G);
