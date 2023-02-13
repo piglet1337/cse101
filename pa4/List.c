@@ -38,7 +38,7 @@ void freeList(List* pL) {
     Node nextN;
     for (int i = 0; i < length(*pL); i++) {
         nextN = n->next;
-        free(n);
+        freeNode(&n);
         n = nextN;
     }
     free(*pL);
@@ -84,7 +84,7 @@ void clear(List L) {
     Node nextN;
     for (int i = 0; i < length(L); i++) {
         nextN = n->next;
-        free(n);
+        freeNode(&n);
         n = nextN;
     }
     L->cursorIndex = -1;
@@ -97,6 +97,7 @@ void set(List L, void* x) {
     // Overwrites the cursor element’s data with x.
     // Pre: length()>0, index()>=0
     if (length(L) > 0 && L->cursorIndex >= 0 && L->cursor != NULL) {
+        freeNode(&L->cursor);
         L->cursor->data = x;
     }
 }
@@ -218,7 +219,7 @@ void deleteFront(List L) {
         }
         else {
             L->front = L->front->next;
-            free(L->front->prev);
+            freeNode(&L->front->prev);
             L->front->prev = NULL;
             L->cursorIndex--;
             L->length--;
@@ -237,7 +238,7 @@ void deleteBack(List L) {
         }
         else {
             L->back = L->back->prev;
-            free(L->back->next);
+            freeNode(&L->back->next);
             L->back->next = NULL;
             L->length--;
         }
@@ -260,7 +261,7 @@ void delete(List L) {
             else {
                 L->cursor->next->prev = L->cursor->prev;
                 L->cursor->prev->next = L->cursor->next;
-                free(L->cursor);
+                freeNode(&L->cursor);
                 L->length--;
             }
             L->cursor = NULL;

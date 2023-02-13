@@ -160,24 +160,25 @@ static List listSum(List A, List B, int sum) {
         }
         if (aCurrent->column > bCurrent->column) {
             if (sum)  {
-                append(L, bCurrent);
+                append(L, newEntry(bCurrent->column, bCurrent->value));
             }
             else {append(L, newEntry(bCurrent->column, -bCurrent->value));}
             moveNext(B);
         }
         if (aCurrent->column < bCurrent->column) {
-            append(L, aCurrent);
+            append(L, newEntry(aCurrent->column, aCurrent->value));
             moveNext(A);
         }
     }
     while(index(A) >= 0) {
         Entry aCurrent = (Entry) get(A);
-        append(L, aCurrent);
+        append(L, newEntry(aCurrent->column, aCurrent->value));
         moveNext(A);
     }
     while(index(B) >= 0) {
         Entry bCurrent = (Entry) get(B);
-        append(L, bCurrent);
+        if (sum) {append(L, newEntry(bCurrent->column, bCurrent->value));}
+        else {append(L, newEntry(bCurrent->column, -bCurrent->value));}
         moveNext(B);
     }
     return L;
@@ -189,6 +190,7 @@ Matrix sum(Matrix A, Matrix B) {
     if (size(A) != size(B)) {exit(1);}
     Matrix sum = newMatrix(A->size);
     for (int i = 0; i < A->size; i++) {
+        freeList(&sum->entryArrray[i]);
         sum->entryArrray[i] = listSum(A->entryArrray[i], B->entryArrray[i], 1);
     }
     return sum;
@@ -200,6 +202,7 @@ Matrix diff(Matrix A, Matrix B) {
     if (size(A) != size(B)) {exit(1);}
     Matrix diff = newMatrix(A->size);
     for (int i = 0; i < A->size; i++) {
+        freeList(&diff->entryArrray[i]);
         diff->entryArrray[i] = listSum(A->entryArrray[i], B->entryArrray[i], 0);
     }
     return diff;
@@ -238,6 +241,7 @@ Matrix product(Matrix A, Matrix B) {
             changeEntry(AB, i+1, j+1, vectorDot(A->entryArrray[i], trans->entryArrray[j]));
         }
     }
+    freeMatrix(&trans);
     return AB;
 }
 // printMatrix()
