@@ -73,7 +73,7 @@ int main(int argc, char *argv[]) {
     temp = product(A, B);
     printMatrix(outputFile, temp);
     freeMatrix(&temp);
-    fprintf(outputFile, "\nB+B =\n");
+    fprintf(outputFile, "\nB*B =\n");
     temp = product(B, B);
     printMatrix(outputFile, temp);
     freeMatrix(&temp);

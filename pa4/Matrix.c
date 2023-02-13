@@ -88,18 +88,31 @@ void makeZero(Matrix M) {
 // Changes the ith row, jth column of M to the value x.
 // Pre: 1<=i<=size(M), 1<=j<=size(M)
 void changeEntry(Matrix M, int i, int j, double x) {
-    if (i<1 || i>size(M) || j<1 || j>size(M) || x == 0) {return;}
+    if (i<1 || i>size(M) || j<1 || j>size(M)) {return;}
     Entry changed = newEntry(j, x);
     for (moveFront(M->entryArrray[i-1]); index(M->entryArrray[i-1]) >= 0; moveNext(M->entryArrray[i-1])) {
         Entry current = (Entry) get(M->entryArrray[i-1]);
         if (current->column == j) {
+            if (x == 0) {
+                free(changed);
+                delete(M->entryArrray[i-1]);
+                return;
+            }
             set(M->entryArrray[i-1], changed);
             return;
         }
         if (current->column > j) {
+            if (x == 0) {
+                free(changed);
+                return;
+            }
             insertBefore(M->entryArrray[i-1], changed);
             return;
         }
+    }
+    if (x == 0) {
+        free(changed);
+        return;
     }
     append(M->entryArrray[i-1], changed);
 }
@@ -189,10 +202,12 @@ static List listSum(List A, List B, int sum) {
 Matrix sum(Matrix A, Matrix B) {
     if (size(A) != size(B)) {exit(1);}
     Matrix sum = newMatrix(A->size);
+    Matrix temp = copy(B);
     for (int i = 0; i < A->size; i++) {
         freeList(&sum->entryArrray[i]);
-        sum->entryArrray[i] = listSum(A->entryArrray[i], B->entryArrray[i], 1);
+        sum->entryArrray[i] = listSum(A->entryArrray[i], temp->entryArrray[i], 1);
     }
+    freeMatrix(&temp);
     return sum;
 }
 // diff()
@@ -201,10 +216,12 @@ Matrix sum(Matrix A, Matrix B) {
 Matrix diff(Matrix A, Matrix B) {
     if (size(A) != size(B)) {exit(1);}
     Matrix diff = newMatrix(A->size);
+    Matrix temp = copy(B);
     for (int i = 0; i < A->size; i++) {
         freeList(&diff->entryArrray[i]);
-        diff->entryArrray[i] = listSum(A->entryArrray[i], B->entryArrray[i], 0);
+        diff->entryArrray[i] = listSum(A->entryArrray[i], temp->entryArrray[i], 0);
     }
+    freeMatrix(&temp);
     return diff;
 }
 

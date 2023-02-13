@@ -69,6 +69,7 @@ int main(int argc, char* argv[]){
     freeMatrix(&F);
     freeMatrix(&G);
     freeMatrix(&H);
+    return 0;
 }
 
 

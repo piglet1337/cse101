@@ -97,7 +97,7 @@ void set(List L, void* x) {
     // Overwrites the cursor element’s data with x.
     // Pre: length()>0, index()>=0
     if (length(L) > 0 && L->cursorIndex >= 0 && L->cursor != NULL) {
-        freeNode(&L->cursor);
+        free(L->cursor->data);
         L->cursor->data = x;
     }
 }
