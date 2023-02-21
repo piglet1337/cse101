@@ -49,30 +49,37 @@ int main(int argc, char *argv[]) {
     Matrix temp = scalarMult(1.5, A);
     printMatrix(outputFile, temp);
     freeMatrix(&temp);
+
     fprintf(outputFile, "\nA+B =\n");
     temp = sum(A, B);
     printMatrix(outputFile, temp);
     freeMatrix(&temp);
+
     fprintf(outputFile, "\nA+A =\n");
     temp = sum(A, A);
     printMatrix(outputFile, temp);
     freeMatrix(&temp);
+
     fprintf(outputFile, "\nB-A =\n");
     temp = diff(B, A);
     printMatrix(outputFile, temp);
     freeMatrix(&temp);
+
     fprintf(outputFile, "\nA-A =\n");
     temp = diff(A, A);
     printMatrix(outputFile, temp);
     freeMatrix(&temp);
+
     fprintf(outputFile, "\nTranspose(A) =\n");
     temp = transpose(A);
     printMatrix(outputFile, temp);
     freeMatrix(&temp);
+
     fprintf(outputFile, "\nA*B =\n");
     temp = product(A, B);
     printMatrix(outputFile, temp);
     freeMatrix(&temp);
+    
     fprintf(outputFile, "\nB*B =\n");
     temp = product(B, B);
     printMatrix(outputFile, temp);
