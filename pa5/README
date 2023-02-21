@@ -1,0 +1,8 @@
+Ryan Miller, rnmiller  
+2023 Winter CSE101 PA5  
+  
+List.h: Header file for List ADT  
+List.cpp: List ADT Module  
+ListTest.cpp: Test client for List ADT
+Shuffle.c: Shuffle program that counts the amount of faro shuffles to return a list to original order  
+Makefile: Makefile for this assignment, can be used to compile programs  
