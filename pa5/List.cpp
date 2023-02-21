@@ -382,5 +382,9 @@ List& List::operator=( const List& L ) {
         insertBefore(N->data);
         N = N->next;
     }
+    moveFront();
+    for (int i = 0; i < L.pos_cursor; i++) {
+        moveNext();
+    }
     return *this;
 }

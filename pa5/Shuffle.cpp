@@ -8,6 +8,20 @@
 //include libraries
 #include "List.h"
 
+//another method of calculating count
+//2^k%(n+1) = 1 for smallest int k>0
+int numShuffles(int n) {
+    if (n%2 == 1) {n--;}
+    if (n==0) {return 1;}
+    long count = 1, k = 2;
+    while (k != 1) {
+        k *= 2;
+        k %= n+1;
+        count++;
+    }
+    return count;
+}
+
 //Performs a faro shuffle on D
 void shuffle(List& D) {
     List temp;
@@ -39,29 +53,20 @@ int main(int argc, char *argv[]) {
     //Print size and amount of shuffles from 1 to largest
     for (int i = 1; i < largest+1; i++) {
         std::cout << " " + std::to_string(i);
-        List L;
-        for (int j = 0; j < i; j++) {
-            L.insertBefore(j);
-        }
-        int count = 1;
-        List copy = List(L);
-        shuffle(L);
-        while (!(copy == L)) {
-            shuffle(L);
-            count++;
-        }
-        int temp = i;
-        for (int j = 0; j < 16; j++) {
-            while (temp > 0) {
-                temp /= 10;
-                j++;
-            }
-            std::cout << " ";
-        }
-        std::cout << std::to_string(count);
-        // if (i < largest) {
-            std::cout << "\n";
+        // List L;
+        // for (int j = 0; j < i; j++) {
+        //     L.insertBefore(j);
         // }
+        // int count = 1;
+        // List copy = List(L);
+        // shuffle(L);
+        // while (!(copy == L)) {
+        //     shuffle(L);
+        //     count++;
+        // }
+        int count = numShuffles(i);
+        // if (count != numShuffles(i)) {std::cout << "fail";}
+        std::cout << "\t\t " + std::to_string(count) + "\n";
     }
     return 0;
 }
