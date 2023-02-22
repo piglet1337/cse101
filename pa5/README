@@ -6,3 +6,7 @@ List.cpp: List ADT Module
 ListTest.cpp: Test client for List ADT
 Shuffle.c: Shuffle program that counts the amount of faro shuffles to return a list to original order  
 Makefile: Makefile for this assignment, can be used to compile programs  
+  
+I found a much better way of calculating shuffle count.  
+I commented out the normal way of calculating it using the shuffle function.  
+I also put an explaination of why my method works in comments above it. 
