@@ -6,7 +6,6 @@
 *********************************************************************************/
 
 #include "List.h"
-#include <unordered_set>
 
 // Node constructor
 List::Node::Node(ListElement x) {
