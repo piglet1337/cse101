@@ -222,7 +222,7 @@ void List::eraseAfter() {
     Node *n = afterCursor;
     afterCursor = n->next;
     afterCursor->prev = n->prev;
-    n->prev->next = afterCursor;
+    beforeCursor->next = afterCursor;
     delete n;
     num_elements--;
 }
@@ -237,7 +237,7 @@ void List::eraseBefore() {
     Node *n = beforeCursor;
     beforeCursor = n->prev;
     beforeCursor->next = n->next;
-    n->next->prev = beforeCursor;
+    afterCursor->prev = beforeCursor;
     delete n;
     num_elements--;
     pos_cursor--;
@@ -253,12 +253,10 @@ void List::eraseBefore() {
 // returns the final cursor position. If x is not found, places the cursor 
 // at position length(), and returns -1. 
 int List::findNext(ListElement x) {
-    moveNext();
     while (afterCursor != backDummy) {
-        if (beforeCursor->data == x) {return position();}
         moveNext();
+        if (beforeCursor->data == x) {return position();}
     }
-    if (beforeCursor->data == x) {return position();}
     return -1;
 }
 
@@ -269,12 +267,10 @@ int List::findNext(ListElement x) {
 // returns the final cursor position. If x is not found, places the cursor 
 // at position 0, and returns -1. 
 int List::findPrev(ListElement x) {
-    movePrev();
     while (beforeCursor != frontDummy) {
-        if (afterCursor->data == x) {return position();}
         movePrev();
+        if (afterCursor->data == x) {return position();}
     }
-    if (afterCursor->data == x) {return position();}
     return -1;
 }
 
@@ -285,44 +281,43 @@ int List::findPrev(ListElement x) {
 // is not moved with respect to the retained elements, i.e. it lies between 
 // the same two retained elements that it did before cleanup() was called.
 void List::cleanup() {
-    Node *current = frontDummy->next, *prev = frontDummy;
-    std::unordered_set<ListElement> seen;
-    int pos = 0;
-    while (current != backDummy) {
-        if (seen.find(current->data) != seen.end()) {
-            if (pos < pos_cursor) {pos_cursor--;}
-            if (current == afterCursor) {
-                afterCursor = current->next;
-            }
-            if (current == beforeCursor) {
-                beforeCursor = current->prev;
-            }
-            prev->next = current->next;
-            current->next->prev = prev;
-            delete current;
-            current = prev->next;
-            num_elements--;
-        } else {
-            seen.insert(current->data);
-            prev = current;
-            current = current->next;
-            pos++;
+    Node *before = beforeCursor;
+    Node *after = afterCursor;
+    int pos = pos_cursor;
+    Node *currentBefore = frontDummy;
+    Node *currentAfter = frontDummy->next;
+    for (int i = 0; i < length(); i++) {
+        beforeCursor = currentBefore = currentAfter;
+        afterCursor = currentAfter = currentAfter->next;
+        pos_cursor = i+1;
+        int result = pos_cursor;
+        int target = beforeCursor->data;
+        while (true) {
+            result = findNext(target);
+            if (result == -1) {break;}
+            if (result == pos) {before = before->prev;}
+            if (result == pos+1) {after = after->next;}
+            if (result <= pos) {pos--;}
+            if (result == i+2) {currentAfter = currentAfter->next;}
+            eraseBefore();
         }
     }
+    beforeCursor = before;
+    afterCursor = after;
+    pos_cursor = pos;
 }
 
 // concat()
 // Returns a new List consisting of the elements of this List, followed by
 // the elements of L. The cursor in the returned List will be at postion 0.
 List List::concat(const List& L) const {
-    List copy = List(*this);
-    copy.moveBack();
-    Node* N = L.frontDummy->next;
-    while (N != L.backDummy) {
-        copy.insertBefore(N->data);
-        N = N->next;
-    }
+    List copy = List(L);
     copy.moveFront();
+    Node* N = backDummy->prev;
+    while (N != frontDummy) {
+        copy.insertAfter(N->data);
+        N = N->prev;
+    }
     return copy;
 }
 
@@ -378,13 +373,18 @@ bool operator==( const List& A, const List& B ) {
 List& List::operator=( const List& L ) {
     clear();
     Node* N = L.frontDummy->next;
+    Node* before = frontDummy;
+    Node* after = backDummy;
     while (N != L.backDummy) {
         insertBefore(N->data);
+        if (N == L.beforeCursor) {
+            before = beforeCursor;
+            after = afterCursor;
+        }
         N = N->next;
     }
-    moveFront();
-    for (int i = 0; i < L.pos_cursor; i++) {
-        moveNext();
-    }
+    beforeCursor = before;
+    afterCursor = after;
+    pos_cursor = L.pos_cursor;
     return *this;
 }

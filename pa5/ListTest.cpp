@@ -8,6 +8,7 @@
 
 #include "List.h"
 #include <assert.h>
+#include <chrono>
 
 int main() {
     List L;
@@ -57,11 +58,45 @@ int main() {
     assert(L.findNext(5) == 2);
     assert(L.findPrev(5) == 1);
     assert(L.findPrev(5) == -1);
+    assert(L.findNext(14) == -1);
+    assert(L.position() == L.length());
     //test concat
     copy.insertAfter(6);
     List concat = L.concat(copy);
     assert(concat.position() == 0);
-    // assert(concat.position() == 0);
     assert(concat.to_string() == "(2, 5, 6)");
+    //test cleanup
+    List cleanup = List();
+    for (int i = 0; i < 10; i++) {
+        cleanup.insertAfter(i);
+        cleanup.insertAfter(i);
+    }
+    cleanup.moveFront();
+    cleanup.moveNext();
+    cleanup.moveNext();
+    cleanup.cleanup();
+    assert(cleanup.to_string() == "(9, 8, 7, 6, 5, 4, 3, 2, 1, 0)");
+    assert(cleanup.position() == 1);
+
+    //test function performance
+    // List test = List();
+    // for (int i = 0; i < 1000; i++) {
+    //     test.insertAfter(i);
+    // }
+    // for (int i = 9; i >= 0; i--) {
+    //     test.insertAfter(i);
+    // }
+
+    // std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now(); // Get start time
+
+    // for (int i = 0; i < 1000000; i++) {
+    //     List copy = test;
+    // }
+
+    // std::chrono::high_resolution_clock::time_point stop = std::chrono::high_resolution_clock::now(); // Get stop time
+
+    // std::chrono::milliseconds duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start); // Calculate duration in milliseconds
+
+    // std::cout << "Time taken by program: " << duration.count() << " milliseconds" << std::endl;
     return 0;
 }
