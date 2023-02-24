@@ -289,10 +289,9 @@ void List::cleanup() {
         beforeCursor = currentBefore = currentAfter;
         afterCursor = currentAfter = currentAfter->next;
         pos_cursor = i+1;
-        int result = pos_cursor;
         int target = beforeCursor->data;
         while (true) {
-            result = findNext(target);
+            int result = findNext(target);
             if (result == -1) {break;}
             if (result == pos) {before = before->prev;}
             if (result == pos+1) {after = after->next;}
