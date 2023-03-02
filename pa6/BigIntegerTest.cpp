@@ -10,9 +10,16 @@
 #include <assert.h>
 
 int main() {
-    BigInteger A;
-    BigInteger B = BigInteger("-98378923");
+    BigInteger A = BigInteger("1782");
+    BigInteger B = BigInteger("2643");
     BigInteger C = BigInteger(B);
-    std::cout << C.to_string();
+
+    //test compare
+    assert(A < B);
+    assert(B == C);
+    assert(B > A);
+
+    //test add
+    assert((A+B).to_string() == "4425");
     return 0;
 }

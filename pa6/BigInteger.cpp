@@ -9,7 +9,7 @@
 #include <stdexcept>
 
 const int power = 2;
-const ListElement base = 10^(long)power;
+const ListElement base = 100;
 
 // Class Constructors & Destructors ----------------------------------------
 
@@ -88,7 +88,25 @@ int BigInteger::sign() const {
 int BigInteger::compare(const BigInteger& N) const {
     if (signum < N.signum) {return -1;}
     if (signum > N.signum) {return 1;}
-    
+    List copy = List(digits);
+    List nCopy = List(N.digits);
+    copy.moveFront();
+    nCopy.moveFront();
+    for (int i = 0; i < copy.length() - nCopy.length(); i++) {
+        if (copy.peekNext() > 0) {return 1;}
+        copy.moveNext();
+    }
+    for (int i = 0; i < nCopy.length() - copy.length(); i++) {
+        if (nCopy.peekNext() > 0) {return -1;}
+        nCopy.moveNext();
+    }
+    while (copy.position() < copy.length()) {
+        if (copy.peekNext() > nCopy.peekNext()) {return 1;}
+        if (copy.peekNext() < nCopy.peekNext()) {return -1;}
+        copy.moveNext();
+        nCopy.moveNext();
+    }
+    return 0;
 }
 
 
@@ -111,10 +129,65 @@ void BigInteger::negate() {
 
 // BigInteger Arithmetic operations ----------------------------------------
 
+
+static List addition(List A, List B) {
+    List sum = List();
+    A.moveBack();
+    B.moveBack();
+    long carry = 0;
+    while (A.position() > 0 || B.position() > 0) {
+        long result = A.peekPrev() + B.peekPrev() + carry;
+        carry = 0;
+        sum.insertAfter(result % base);
+        if (result > base) {carry = 1;}
+        if (A.position() > 0) {A.movePrev();}
+        if (B.position() > 0) {B.movePrev();}
+    }
+    return sum;
+}
+
+static List subtraction(List A, List B) {
+    List sum = List();
+    A.moveBack();
+    B.moveBack();
+    long carry = 0;
+    while (A.position() > 0 || B.position() > 0) {
+        long result = A.peekPrev() + B.peekPrev() + carry;
+        carry = 0;
+        sum.insertAfter(result % base);
+        if (result > base) {carry = 1;}
+        if (A.position() > 0) {A.movePrev();}
+        if (B.position() > 0) {B.movePrev();}
+    }
+    return sum;
+}
 // add()
 // Returns a BigInteger representing the sum of this and N.
 BigInteger BigInteger::add(const BigInteger& N) const {
-
+    BigInteger sum = BigInteger();
+    List copy = List(digits);
+    List nCopy = List(N.digits);
+    if (signum == N.signum) {
+        sum.digits = addition(copy, nCopy);
+        sum.signum = signum;
+    }
+    if (signum == 1 && N.signum == -1) {
+        sum.digits = subtraction(copy, nCopy);
+        sum.signum = signum;
+    }
+    if (signum == -1 && N.signum == 1) {
+        sum.digits = subtraction(nCopy, copy);
+        sum.signum = signum;
+    }
+    if (signum == 0) {
+        sum.digits = nCopy;
+        sum.signum = N.signum;
+    }
+    if (N.signum == 0) {
+        sum.digits = copy;
+        sum.signum = signum;
+    }
+    return sum;
 }
 
 // sub()
