@@ -64,6 +64,9 @@ BigInteger::BigInteger(std::string s) {
             digits.insertAfter(value);
         }
     }
+    for (digits.moveFront(); digits.peekNext() == 0; ) {
+        digits.eraseAfter();
+    }
 }
 
 
