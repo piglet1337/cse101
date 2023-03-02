@@ -8,8 +8,8 @@
 #include "BigInteger.h"
 #include <stdexcept>
 
-const int power = 2;
-const ListElement base = 100;
+const int power = 9;
+const ListElement base = 1000000000;
 
 // Class Constructors & Destructors ----------------------------------------
 
@@ -32,10 +32,16 @@ BigInteger::BigInteger(std::string s) {
     int stop = 0;
     switch (s[0]) {
         case '-':
+            if (s.length() == 1) {
+                throw std::invalid_argument("BigInteger: Constructor: non-numeric string");
+            }
             stop = 1;
             signum = -1;
             break;
         case '+':
+            if (s.length() == 1) {
+                throw std::invalid_argument("BigInteger: Constructor: non-numeric string");
+            }
             signum = 1;
             stop = 1;
             break;
@@ -44,7 +50,7 @@ BigInteger::BigInteger(std::string s) {
             break;
     }
     for (ListElement scalar = 1, value = 0, i = s.length() - 1; i >= stop; i--) {
-        if (s[i] < '0' && s[i] > '9') {
+        if (s[i] < '0' || s[i] > '9') {
             throw std::invalid_argument("BigInteger: Constructor: non-numeric string");
         }
         value += scalar * (s[i] - '0');
@@ -136,7 +142,11 @@ static List addition(List A, List B) {
     B.moveBack();
     long carry = 0;
     while (A.position() > 0 || B.position() > 0) {
-        long result = A.peekPrev() + B.peekPrev() + carry;
+        long aNum = 0;
+        long bNum = 0;
+        if (A.position() != 0) {aNum = A.peekPrev();}
+        if (B.position() != 0) {bNum = B.peekPrev();}
+        long result = aNum + bNum + carry;
         carry = 0;
         sum.insertAfter(result % base);
         if (result > base) {carry = 1;}
@@ -152,12 +162,22 @@ static List subtraction(List A, List B) {
     B.moveBack();
     long carry = 0;
     while (A.position() > 0 || B.position() > 0) {
-        long result = A.peekPrev() + B.peekPrev() + carry;
+        long aNum = 0;
+        long bNum = 0;
+        if (A.position() != 0) {aNum = A.peekPrev();}
+        if (B.position() != 0) {bNum = B.peekPrev();}
+        long result = aNum - bNum - carry;
         carry = 0;
-        sum.insertAfter(result % base);
-        if (result > base) {carry = 1;}
+        if (result < 0) {
+            result += base;
+            carry = 1;
+        }
+        sum.insertAfter(result);
         if (A.position() > 0) {A.movePrev();}
         if (B.position() > 0) {B.movePrev();}
+    }
+    for (sum.moveFront(); sum.peekNext() == 0; ) {
+        sum.eraseAfter();
     }
     return sum;
 }
@@ -170,22 +190,49 @@ BigInteger BigInteger::add(const BigInteger& N) const {
     if (signum == N.signum) {
         sum.digits = addition(copy, nCopy);
         sum.signum = signum;
-    }
-    if (signum == 1 && N.signum == -1) {
-        sum.digits = subtraction(copy, nCopy);
-        sum.signum = signum;
-    }
-    if (signum == -1 && N.signum == 1) {
-        sum.digits = subtraction(nCopy, copy);
-        sum.signum = signum;
+        return sum;
     }
     if (signum == 0) {
         sum.digits = nCopy;
         sum.signum = N.signum;
+        return sum;
     }
     if (N.signum == 0) {
         sum.digits = copy;
         sum.signum = signum;
+        return sum;
+    }
+    if (signum == 1 && N.signum == -1) {
+        BigInteger temp = BigInteger(N);
+        temp.negate();
+        if (compare(temp) == 1) {
+            sum.digits = subtraction(copy, nCopy);
+            sum.signum = 1;
+        }
+        if (compare(temp) == -1) {
+            sum.digits = subtraction(nCopy, copy);
+            sum.signum = -1;
+        }
+        if (compare(temp) == 0) {
+            sum.signum = 0;
+        }
+        return sum;
+    }
+    if (signum == -1 && N.signum == 1) {
+        BigInteger temp = BigInteger(N);
+        temp.negate();
+        if (compare(temp) == 1) {
+            sum.digits = subtraction(copy, nCopy);
+            sum.signum = -1;
+        }
+        if (compare(temp) == -1) {
+            sum.digits = subtraction(nCopy, copy);
+            sum.signum = 1;
+        }
+        if (compare(temp) == 0) {
+            sum.signum = 0;
+        }
+        return sum;
     }
     return sum;
 }
@@ -193,13 +240,40 @@ BigInteger BigInteger::add(const BigInteger& N) const {
 // sub()
 // Returns a BigInteger representing the difference of this and N.
 BigInteger BigInteger::sub(const BigInteger& N) const {
-
+    BigInteger temp = BigInteger(N);
+    temp.negate();
+    return add(temp);
 }
 
 // mult()
 // Returns a BigInteger representing the product of this and N. 
 BigInteger BigInteger::mult(const BigInteger& N) const {
-
+    BigInteger product;
+    product.signum = signum * N.signum;
+    if (product.signum == 0) {
+        return product;
+    }
+    List copy = List(digits);
+    List nCopy = List(N.digits);
+    for (nCopy.moveBack(); nCopy.position() > 0; nCopy.movePrev()) {
+        List temp;
+        for (int i = 0; i < nCopy.length() - nCopy.position(); i++) {
+            temp.insertAfter(0);
+        }
+        long carry = 0;
+        for (copy.moveBack(); copy.position() > 0; copy.movePrev()) {
+            long result = nCopy.peekPrev() * copy.peekPrev() + carry;
+            carry = 0;
+            if (result > base) {
+                carry = result / base;
+                result = result%base;
+            }
+            temp.insertAfter(result);
+        }
+        if (carry) {temp.insertAfter(carry);}
+        product.digits = addition(product.digits, temp);
+    }
+    return product;
 }
 
 

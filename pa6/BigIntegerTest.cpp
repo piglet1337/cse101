@@ -19,7 +19,20 @@ int main() {
     assert(B == C);
     assert(B > A);
 
-    //test add
+    //test add and sub
     assert((A+B).to_string() == "4425");
+    assert((B-C).to_string() == "0");
+    assert((B-A).to_string() == "861");
+    assert((A-B).to_string() == "-861");
+    
+    //test mult
+    A *= B * A;
+    assert(A.to_string() == "8392909932");
+
+    //test makeZero
+    B.makeZero();
+    A *= B;
+    assert(A.to_string() == "0");
+    assert(B.to_string() == "0");
     return 0;
 }
