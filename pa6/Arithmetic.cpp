@@ -39,6 +39,6 @@ int main(int argc, char *argv[]) {
     outfile << (A*B).to_string() + "\n\n";
     outfile << (A*A).to_string() + "\n\n";
     outfile << (B*B).to_string() + "\n\n";
-    outfile << (BigInteger("9")*A*A*A*A+BigInteger("16")*B*B*B*B*B).to_string() + "\n\n";
+    outfile << (BigInteger("9")*A*A*A*A+BigInteger("16")*B*B*B*B*B).to_string() + "\n";
     return 0;
 }

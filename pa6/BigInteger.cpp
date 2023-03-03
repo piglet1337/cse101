@@ -296,7 +296,12 @@ std::string BigInteger::to_string() {
         strRep += "-";
     }
     for (digits.moveFront(); digits.position() < digits.length(); digits.moveNext()) {
-        strRep += std::to_string(digits.peekNext());
+        std::string number = std::to_string(digits.peekNext());
+        int length = number.length();
+        for (int i = 0; i < power-length && digits.position() != 0; i++) {
+            number = "0" + number;
+        }
+        strRep += number;
     }
     return strRep;
 }
