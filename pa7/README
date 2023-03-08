@@ -1,0 +1,8 @@
+Ryan Miller, rnmiller  
+2023 Winter CSE101 PA7  
+  
+Dictionary.h: Header file for Dictionary ADT  
+Dictionary.cpp: Dictionary ADT Module  
+DictionaryTest.cpp: Test client for Dictionary ADT  
+Order.cpp: Order program that creates and prints a Dictionary  
+Makefile: Makefile for this assignment, can be used to compile programs  
