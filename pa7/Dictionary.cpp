@@ -57,11 +57,10 @@ void Dictionary::postOrderDelete(Node* R) {
 Dictionary::Node* Dictionary::search(Node* R, keyType k) const {
     if (R == nil) {return nil;}
     if (R->key == k) {return R;}
-    Node* left = search(R->left, k);
-    Node* right = search(R->right, k);
-    if (left != nil) {return left;}
-    if (right != nil) {return right;}
-    return nil;
+    if (R->key < k) {
+        return search(R->right, k);
+    }
+    return search(R->left, k);
 }
 
 // findMin()
@@ -211,17 +210,15 @@ void Dictionary::setValue(keyType k, valType v) {
         return;
     }
     num_pairs++;
+    Node *newNode = new Node(k, v);
+    newNode->left = nil;
+    newNode->right = nil;
     if (root == nil) {
-        root = new Node(k, v);
-        root->left = nil;
-        root->right = nil;
+        root = newNode;
         root->parent = nil;
         return;
     }
     Node *cursor = root;
-    Node *newNode = new Node(k, v);
-    newNode->left = nil;
-    newNode->right = nil;
     while (true) {
         if (cursor->key < k) {
             if (cursor->right == nil) {
