@@ -1,0 +1,9 @@
+Ryan Miller, rnmiller  
+2023 Winter CSE101 PA8  
+  
+Dictionary.h: Header file for Dictionary ADT  
+Dictionary.cpp: Dictionary ADT Module  
+DictionaryTest.cpp: Test client for Dictionary ADT  
+Order.cpp: Order program that creates and prints a Dictionary  
+WordFrequency.cpp: WordFrequency program that counts occurrences of words  
+Makefile: Makefile for this assignment, can be used to compile programs  
